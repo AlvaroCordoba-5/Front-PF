@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Paginated(pag, limitPag, pageContrl,firstPrevContrl, nextLastContrl ) {
+export default function Paginated({pag, limitPag, pageContrl,firstPrevContrl, nextLastContrl}) {
 
 // trae las pags, el limite, el controlador de los botones sobre el estado de las paginas
 // y las validaciones de los botones, para que no se puedan oprimir en casos imposibles

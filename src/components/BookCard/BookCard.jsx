@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function BookCard(title, author, img, price) {
+export default function BookCard({title, author, img, price}) {
     return (
         <div>
             
