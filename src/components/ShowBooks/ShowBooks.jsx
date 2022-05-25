@@ -1,6 +1,8 @@
 import {React, useState} from 'react'
 import BookCard from '../BookCard/BookCard'
 import Paginated from '../Paginated/Paginated'
+import {books} from "../DB.js"
+import { Link } from 'react-router-dom'
 
 export default function ShowBooks() {
 
