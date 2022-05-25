@@ -1,4 +1,4 @@
-[
+export const books = [
     {
         id: 0,
         title: "The Year of the Locust: Terry Hayes",
