@@ -16,9 +16,13 @@ export default function ShowBooks() {
 
     const booksPerPage = 9
 
+    console.log(books)
+
     var lastIndex = page * booksPerPage                     //indice incial para metodo slice 
     var firstIndex = lastIndex - booksPerPage               //indice final para metodo slice
     var currentBooks = books.slice(firstIndex, lastIndex)   //metodo slice para determinar del array los libros a mostrar por pagina
+
+    console.log(currentBooks)
 
     const limitPage = Math.ceil(books.length/booksPerPage)
 
@@ -47,7 +51,7 @@ export default function ShowBooks() {
         ? currentBooks.map(b => { 
             return (
             <Link to={"introducir path segun routing"}>
-                <BookCard title={b.title} img={b.img} author={b.author} price={b.price}></BookCard>
+                <BookCard title={b.title} img={b.imgUrl} author={b.author} price={b.price}></BookCard>
             </Link>
             ) 
             }) 
