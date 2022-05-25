@@ -13,9 +13,9 @@ export default function SearchBar() {
     }
 
     function handleSubmit(e) {
-        e.preventDefault()
-        // dispatch(getBySearch(search)) Esperando a la action
-        setSearch("")
+        e.preventDefault();
+        dispatch(getBySearch(search));
+        setSearch("");
     }
     return (
         <div>
