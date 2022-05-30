@@ -7,7 +7,6 @@ import { removeAllFromCart, getCart } from '../../redux/actions';
 import { Link } from 'react-router-dom';
 import './styles.css'
 export default function Cart() {
-    ASDFASDFADSFSDAFDS
     const dispatch = useDispatch()
     const bookCarts = useSelector(state => state.cart)
 
