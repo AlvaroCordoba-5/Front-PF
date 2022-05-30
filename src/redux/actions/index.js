@@ -25,7 +25,7 @@ export function getBySearch(input) {
     if (input.length) {
       try {
         const response = await axios.get(
-          `https://back-pf.herokuapp.com/books?titleOrAuthor=${encodeURIComponent(
+          `http://back-pf.herokuapp.com/books?titleOrAuthor=${encodeURIComponent(
             input
           )}`
         );
@@ -39,14 +39,14 @@ export function getBySearch(input) {
 
 export const getBooks = (dispatch) => {
   axios
-    .get(`https://back-pf.herokuapp.com/books`)
+    .get(`http://back-pf.herokuapp.com/books`)
     .then((res) => dispatch({ type: GET_BOOKS, payload: res.data }))
     .catch((e) => console.log(e));
 };
 
 export const getCategories = (dispatch) => {
   axios
-    .get(`https://back-pf.herokuapp.com/categories`)
+    .get(`http://back-pf.herokuapp.com/categories`)
     .then((res) => dispatch({ type: GET_CATEGORIES, payload: res.data }))
     .catch((e) => console.log(e));
 };
@@ -54,7 +54,7 @@ export const getCategories = (dispatch) => {
 export function getDetail(id) {
   return async function (dispatch) {
     try {
-      var response = await axios.get(`https://back-pf.herokuapp.com/books/${id}`);
+      var response = await axios.get(`http://back-pf.herokuapp.com/books/${id}`);
       return dispatch({ type: GET_DETAIL, payload: response.data });
     } catch (e) {
       console.log(e);
@@ -70,7 +70,7 @@ export function filterCategory(category) {
   if(category==="All"){
     return async function (dispatch) {
       try {
-        var response = await axios.get(`https://back-pf.herokuapp.com/books`);
+        var response = await axios.get(`http://back-pf.herokuapp.com/books`);
         return dispatch({ type: FILTER_CATEGORY, payload: response.data });
       } catch (e) {
         console.log(e);
@@ -79,7 +79,7 @@ export function filterCategory(category) {
   }
   else {return async function (dispatch) {
     try {
-      var response = await axios.get(`https://back-pf.herokuapp.com/books?category=${category}`);
+      var response = await axios.get(`http://back-pf.herokuapp.com/books?category=${category}`);
       return dispatch({ type: FILTER_CATEGORY, payload: response.data });
     } catch (e) {
       console.log(e);
@@ -90,7 +90,7 @@ export function filterCategory(category) {
 export function filterPrice(price1, price2) {
   return async function (dispatch) {
     try {
-      var response = await axios.get(`https://back-pf.herokuapp.com/books?rango1=${price1}&rango2=${price2}`);
+      var response = await axios.get(`http://back-pf.herokuapp.com/books?rango1=${price1}&rango2=${price2}`);
       return dispatch({ type: FILTER_PRICE, payload: response.data });
     } catch (e) {
       console.log(e);
@@ -106,7 +106,7 @@ export function filterScore(score){
   if(score==="All"){
     return async function (dispatch) {
       try {
-        var response = await axios.get(`https://back-pf.herokuapp.com/books`);
+        var response = await axios.get(`http://back-pf.herokuapp.com/books`);
         return dispatch({ type: FILTER_SCORE, payload: response.data });
       } catch (e) {
         console.log(e);
@@ -115,7 +115,7 @@ export function filterScore(score){
   }
   else {return async function (dispatch){
         try{
-            var response = await axios.get(`https://back-pf.herokuapp.com/books?score=${score}`)
+            var response = await axios.get(`http://back-pf.herokuapp.com/books?score=${score}`)
             return dispatch({type: FILTER_SCORE, payload: response.data})
         }
         catch(e){
@@ -142,7 +142,7 @@ export function removeOneFromCart(id) {
 export function postBook(data) {
   return dispatch => {
     axios
-    .post(`https://back-pf.herokuapp.com/books`, data)
+    .post(`http://back-pf.herokuapp.com/books`, data)
     .then(response => dispatch({ type: POST_BOOK }))
     .catch((e) => {console.log(e)})
 }}
@@ -150,7 +150,7 @@ export function postBook(data) {
 export function putBook(data, id) {
   return dispatch => {
     axios
-    .put(`https://back-pf.herokuapp.com/books/book/${id}`, data)
+    .put(`http://back-pf.herokuapp.com/books/book/${id}`, data)
     .then(response => dispatch({ type: PUT_BOOK }))
     .catch((e) => {console.log(e)})
 }}
@@ -158,7 +158,7 @@ export function putBook(data, id) {
 export function deleteBook(id) {
   return dispatch => {
     axios
-    .delete(`https://back-pf.herokuapp.com/books/delete/book/${id}`)
+    .delete(`http://back-pf.herokuapp.com/books/delete/book/${id}`)
     .then(response => dispatch({ type: DELETE_BOOK }))
     .catch((e) => {console.log(e)})
 }}
