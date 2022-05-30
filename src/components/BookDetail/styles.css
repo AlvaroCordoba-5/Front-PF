@@ -17,7 +17,6 @@
   font-weight: 400;
   margin: 0 2rem;
 }
-<<<<<<< HEAD
 @media (max-width: 800px) {
   .container__info {
     flex-direction: column;
@@ -27,8 +26,6 @@
     align-items: flex-start;
   }
 }
-=======
->>>>>>> 950b7c6cef002de3dfaf481bca1b0d1dc6624cc0
 .container__info .image {
   display: flex;
   align-items: flex-end;
@@ -36,7 +33,6 @@
   padding-right: 1rem;
   border-right: 1px solid #c4c4c4;
 }
-<<<<<<< HEAD
 @media (max-width: 800px) {
   .container__info .image {
     flex-direction: row;
@@ -45,8 +41,6 @@
     padding: 10px;
   }
 }
-=======
->>>>>>> 950b7c6cef002de3dfaf481bca1b0d1dc6624cc0
 .container__info .image img {
   max-width: 15rem;
   border-radius: 10px;

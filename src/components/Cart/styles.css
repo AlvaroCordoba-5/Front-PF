@@ -62,14 +62,11 @@
   color: white;
   font-size: 18px;
 }
-<<<<<<< HEAD
 @media (max-width: 900px) {
   .continue {
     flex-direction: column;
   }
 }
-=======
->>>>>>> 950b7c6cef002de3dfaf481bca1b0d1dc6624cc0
 .continue .keep:hover {
   background-color: #c91313;
   cursor: pointer;
