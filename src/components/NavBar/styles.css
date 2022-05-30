@@ -1,0 +1,31 @@
+.navbar .search {
+  align-items: center;
+  display: flex;
+}
+.navbar .logoBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+.navbar .logoBar .links {
+  display: flex;
+  justify-content: space-evenly;
+}
+@media (max-width: 800px) {
+  .navbar .logoBar {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+.navbar .logoBar a {
+  text-decoration: none;
+  color: #001044;
+}
+.navbar .logoBar .log {
+  display: flex;
+  align-items: center;
+}
+.navbar .logoBar .log span {
+  margin: 5px;
+}
