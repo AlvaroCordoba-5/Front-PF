@@ -1,3 +1,5 @@
+import ShoppingHistory from "../../components/ShoppingHistory/ShoppingHistory";
+import { infoBooks, totalPrice } from "../actions";
 import {
   GET_BY_SEARCH,
   GET_DETAIL,
@@ -14,6 +16,27 @@ import {
   POST_BOOK,
   GET_CART,
   PUT_BOOK,
+  GET_LANDING_TOP,
+  GET_LANDING_TOP_CAT,
+  CREATE_USER,
+  LOG_USER,
+  UNLOG_USER,
+  LOG_WITH_GOOGLE,
+  TOTAL_PRICE,
+  CHECKOUT_BOOKS,
+  GET_USERS,
+  EDIT_PROFILE,
+  GET_USER,
+  POST_SUPPORT,
+  ADD_COMMENT,
+  GET_COMMENTS,
+  GET_SUPPORT,
+  GET_FAVS,
+  CHANGE_FAVS,
+  DELETE_FAVS,
+  POST_FAVS,
+  GET_SHOPPING_HISTORY,
+  SET_PAGE
 } from "../actions/types";
 
 const initialState = {
@@ -23,6 +46,19 @@ const initialState = {
   detail: [],
   cart: [],
   categories: [],
+  score: [],
+  categoriesLand: {},
+  user: {},
+  relevants: [],
+  totalPrice: 0,
+  infoBooks: [],
+  users: [],
+  favs: [],
+  changed:false,
+  comments: [],
+  support: [],
+  ShoppingHistory:[],
+  page: 1
 };
 
 export default function rootReducer(state = initialState, action) {
@@ -64,6 +100,7 @@ export default function rootReducer(state = initialState, action) {
       return {
         ...state,
         books: payload,
+        relevants: payload,
       };
     case FILTER_PRICE:
       return {
@@ -116,7 +153,7 @@ export default function rootReducer(state = initialState, action) {
         cart: JSON.parse(localStorage.getItem("carrito")),
       };
     case REMOVE_ALL_FROM_CART:
-      localStorage.removeItem("carrito");
+      localStorage.setItem("carrito", JSON.stringify([]));
       return {
         cart: [],
       };
@@ -147,7 +184,139 @@ export default function rootReducer(state = initialState, action) {
         ...state,
         cart: JSON.parse(localStorage.getItem("carrito")),
       };
+    case GET_LANDING_TOP:
+      return {
+        ...state,
+        score: payload,
+      };
+    case GET_LANDING_TOP_CAT:
+      return {
+        ...state,
+        categoriesLand: payload,
+      };
+
+    case CREATE_USER:
+      return {
+        ...state,
+      };
+
+    case LOG_USER:
+      return {
+        ...state,
+        user: { ...payload },
+        
+      };
+    case LOG_WITH_GOOGLE:
+      localStorage.setItem("token", JSON.stringify(payload.token));
+      console.log(payload);
+      return {
+        ...state,
+        user: { ...payload.user },
+       
+      };
+    case UNLOG_USER:
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        user: {},
+        
+      };
+
+    case TOTAL_PRICE:
+      return {
+        ...state,
+        totalPrice: payload,
+      };
+    case CHECKOUT_BOOKS:
+      return {
+        ...state,
+        infoBooks: payload,
+      };
+    case GET_USERS:
+      console.log("SOY EL PAYLOAD CARAJO", payload);
+      return {
+        ...state,
+        users: payload,
+      };
+
+    case TOTAL_PRICE:
+      return {
+        ...state,
+        totalPrice: payload,
+      };
+    case CHECKOUT_BOOKS:
+      return {
+        ...state,
+        infoBooks: payload,
+      };
+    case EDIT_PROFILE:
+      return {
+        ...state,
+        user: payload,
+      };
+    case GET_USER:
+      return {
+        ...state,
+        user: payload,
+      };
+
+    case ADD_COMMENT:
+      return{
+        ...state
+      }
+    case GET_COMMENTS:
+      return{
+        ...state,
+        comments: payload
+      }
+
+    case POST_SUPPORT:
+      return {
+        ...state,
+      };
+
+    case GET_SUPPORT:
+      return{
+        ...state,
+        support: payload
+      };
+      case GET_FAVS:
+      return{
+        ...state,
+        favs: payload
+      }
+      case CHANGE_FAVS:
+      return{
+        ...state,
+        changed: payload
+      }
+      case DELETE_FAVS:
+      return{
+        ...state,
+        favs:payload
+      };
+      case POST_FAVS:
+      return{
+        ...state,
+        favs:payload
+      }
+
+    case GET_SHOPPING_HISTORY:
+      return{
+        ...state,
+        ShoppingHistory:payload
+      }
+
+    case SET_PAGE:
+        return{
+          ...state,
+          page: payload
+      }
+
     default:
-      return state;
+    return state;
+
+
+    
   }
 }

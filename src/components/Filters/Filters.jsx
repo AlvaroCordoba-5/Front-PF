@@ -1,28 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { filterCategory, filterScore, filterPrice, ordenTitle } from "../../redux/actions"
 import { IoSearchCircleOutline } from 'react-icons/io5'
 import Stars from '../Stars/Stars';
+import { helpCall } from '../../helCall';
 import './styles.css'
 
-export default function Filters({ books, categories, func }) {
+export default function Filters({ categories, func, category, isCategory, setPage }) {
 
     const dispatch = useDispatch();
     const scores = [1, 2, 3, 4, 5]
     const [price1, setPrice1] = useState(1)
-    const [price2, setPrice2] = useState(30)
+    const [price2, setPrice2] = useState()
+    const [maxnum, setMaxnum] = useState(100000000)
 
+
+    useEffect(() => {
+        if (isCategory) dispatch(filterCategory(category))
+        helpCall('/books/maxnum')
+            .then(res => {
+                setMaxnum(res['max'])
+                setPrice2(res['max'])
+            })
+
+
+    }, [])
     function handleFilterCategory(e) {
         e.preventDefault();
         dispatch(filterCategory(e.target.value))
         func();
+        setPage(1);
     }
 
     function handleFilterScore(e) {
         e.preventDefault();
         dispatch(filterScore(e.target.value))
         func();
+        setPage(1);
     }
 
     function handleChange1(e) {
@@ -38,12 +53,14 @@ export default function Filters({ books, categories, func }) {
         e.preventDefault();
         dispatch(filterPrice(price1, price2))
         func();
+        setPage(1);
     }
 
     function handleOrdenTitle(e) {
         e.preventDefault();
         dispatch(ordenTitle(e.target.value))
         func();
+        setPage(1);
     }
 
     return (
@@ -51,11 +68,11 @@ export default function Filters({ books, categories, func }) {
             <div className='selects'>
                 <button className='showAll' onClick={() => dispatch(filterCategory("All"))}> Show all Books</button>
                 <div className='filter'>
-                    <select defaultValue={'default'} onChange={e => handleFilterCategory(e)}>
+                    <select defaultValue={isCategory ? category : 'default'} onChange={e => handleFilterCategory(e)}>
                         <option value="default" hidden>Select a Category</option>
                         <option value="All">All</option>
-                        {categories.map(genero => {
-                            return (<option value={genero.name} key={genero.id}>{genero.name}</option>)
+                        {categories.map(genre => {
+                            return (<option value={genre.name} key={genre.id}>{genre.name}</option>)
                         })}
                     </select>
                 </div>
@@ -78,10 +95,11 @@ export default function Filters({ books, categories, func }) {
             </div>
             <div className='range'>
                 <p>Min Price </p>
-                <input type="range" defaultValue={1} min="1" max="30" onChange={(e) => handleChange1(e)} />
+                <input type="range" defaultValue={1} min="1" max={maxnum} onChange={(e) => handleChange1(e)} />
                 <p>${price1}, 00</p>
                 <p>Max Price </p>
-                <input type="range" defaultValue={30} min={"1"} max="30" onChange={(e) => handleChange2(e)} />
+                {console.log(maxnum)}
+                <input type="range" defaultValue={maxnum} min={"1"} max={maxnum} onChange={(e) => handleChange2(e)} />
                 <p>${price2}, 00</p>
                 <IoSearchCircleOutline className='icon' size={30} onClick={(e) => handleClick(e)} />
             </div>

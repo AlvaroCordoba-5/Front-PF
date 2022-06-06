@@ -1,0 +1,15 @@
+*{
+    margin: 0%;
+    padding: 0%;
+}
+.Home{
+    display: flex;
+    bottom: 50px;
+    
+}
+
+.Container{    
+    padding-left: 150px;        
+    display: flex;    
+    justify-content: center;
+}
