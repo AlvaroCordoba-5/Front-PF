@@ -9,6 +9,7 @@ import Sidebar from '../AdminDashboard/Sidebar'
 export default function FormCreate() {
 
     const dispatch = useDispatch()
+    const user = useSelector(state => state.user)
     var [formSubmit, setFormSubmit] = useState(false)
     var [last, setLast] = useState("")
     var [boolean, setBoolean] = useState(true)
@@ -63,13 +64,14 @@ export default function FormCreate() {
     }
 
     var catego = useSelector(state => state.categories)
-    
-    return (
-        <div className='containerCreate'>
-            {/* <NavBar /> */}
-            <Sidebar/>
 
-            <h2 style={{textAlign:"center", fontWeight:"800"}}>{(detail.id !== undefined ? "Modify the book" : "Create a book")}</h2>
+    return (
+        <>
+        {user.rols?.name === "admin" ?
+        <div className='containerCreate'>
+            <Sidebar />
+            <h2 className='h1'>Book management</h2>
+
             <Formik
 
                 initialValues={base}
@@ -115,6 +117,9 @@ export default function FormCreate() {
                 }}
 
                 onSubmit={(valores, { resetForm }) => {
+                    if (valores.image === "") {
+                        valores.image = 'https://us.123rf.com/450wm/urric/urric1810/urric181000005/118555840-libro-marr%C3%B3n-sobre-fondo-blanco.jpg?ver=6'
+                    }
                     (detail.id !== undefined) ? dispatch(putBook(valores, detail.id)) : dispatch(postBook(valores))
                     resetForm()
                     setFormSubmit(true)
@@ -126,6 +131,7 @@ export default function FormCreate() {
                     <div className='formContainer'>
                         <Form>
                             <div className='formInfo'>
+                                <h2 style={{ textAlign: "center", fontWeight: "800" }}>{(detail.id !== undefined ? "Modify the book" : "Create a book")}</h2>
 
                                 <div className='field'>
                                     <label name="title">Title</label>
@@ -134,7 +140,7 @@ export default function FormCreate() {
                                         name="title"
                                         placeholder='Title'
                                     />
-                                    {touched.title && errors.title && <span>{errors.title}</span>}
+                                    {touched.title && errors.title && <span className='errorMsg'>{errors.title}</span>}
                                 </div>
                                 <div className='field'>
                                     <label name="author">Author</label>
@@ -142,9 +148,9 @@ export default function FormCreate() {
                                         type="text"
                                         name="author"
                                         placeholder='Author'
-                                        
+
                                     />
-                                    {touched.author && errors.author && <span>{errors.author}</span>}
+                                    {touched.author && errors.author && <span className='errorMsg'>{errors.author}</span>}
                                 </div>
                                 <div className='field'>
                                     <label name="categories">Category</label>
@@ -165,19 +171,19 @@ export default function FormCreate() {
                                                     }
                                                 }
                                                 }>
+                                                    {touched.categories && errors.categories && <span className='errorMsg'>{errors.categories}</span>}
                                                     <option value="none">Select category</option>
-                                                    {catego ? catego.map(c => {
+                                                    {catego && catego.map(c => {
                                                         return (
                                                             <option value={c.name} name={c.name}>{c.name}</option>
                                                         )
-                                                    }) : null}
+                                                    })}
                                                 </select>
                                             )
                                         }}
                                     </FieldArray>
                                 </div>
-                                <div className='field'>
-                                    <label name="categories">Categories selected</label>
+                                <div className='field categoriesSelected'>
                                     <FieldArray
                                         name="categories"
                                     >
@@ -186,8 +192,10 @@ export default function FormCreate() {
                                             const { values } = form
                                             return (
                                                 <div >
-                                                    {(values.categories.length > 0) ? values.categories.map(t => {
-                                                        return <div><span value={t}>{t}</span><button type="button" value={t} onClick={(e) => {
+                                                    {(values.categories.length > 0) && <label name="categories">Categories selected:</label>}
+
+                                                    {(values.categories.length > 0) && values.categories.map((t, i) => {
+                                                        return <div key={t} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', borderTop: i > 0 ? '1px solid gray' : '', padding: '5px 0 10px 0', fontSize: '15px' }}><span style={{ marginRight: '10px' }} value={t}>{t}</span><button type="button" value={t} onClick={(e) => {
                                                             let extra = []
                                                             for (let element of values.categories) {
                                                                 if (element !== e.target.value) { extra.push(element) }
@@ -198,12 +206,11 @@ export default function FormCreate() {
 
                                                         }
                                                         >x</button></div>
-                                                    }) : null}
+                                                    })}
                                                 </div>
                                             )
                                         }}
                                     </FieldArray>
-                                    {touched.categories && errors.categories && <span>{errors.categories}</span>}
                                 </div>
                                 <div className='field'>
                                     <label name="price">Price</label>
@@ -214,7 +221,7 @@ export default function FormCreate() {
                                         min="1"
 
                                     />
-                                    {touched.price && errors.price && <span>{errors.price}</span>}
+                                    {touched.price && errors.price && <span className='errorMsg'>{errors.price}</span>}
                                 </div>
                                 <div className='field'>
                                     <label name="stock">Stock</label>
@@ -225,7 +232,7 @@ export default function FormCreate() {
                                         min="1"
 
                                     />
-                                    {touched.stock && errors.stock && <span>{errors.stock}</span>}
+                                    {touched.stock && errors.stock && <span className='errorMsg'>{errors.stock}</span>}
                                 </div>
                                 <div className='field'>
                                     <label name="iamge">Image URL</label>
@@ -245,12 +252,12 @@ export default function FormCreate() {
                                         as="textarea"
 
                                     />
-                                    {touched.description && errors.description && <span>{errors.description}</span>}
+                                    {touched.description && errors.description && <span className='errorMsg'>{errors.description}</span>}
                                 </div>
                                 {(detail.id !== undefined) ? <button type="submit">Modify!</button> : <button type="submit">Create!</button>}
                                 {formSubmit && <span>Action successfully complete!</span>}
                             </div>
-                        </Form>
+                        </Form >
                     </div >
                 )
                 }
@@ -291,7 +298,13 @@ export default function FormCreate() {
                     </div>
                 </div>
             }
-        </div>
-    )
+        </div >:
+        <div className="aviso">
+        <h2>You don't have access here, please go back home</h2>
+        <Link to={`/home`}>
+        <button className='minimize'>Back home</button>
+        </Link>
+        </div>}
+        </>)
 
 }

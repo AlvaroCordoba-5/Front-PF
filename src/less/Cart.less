@@ -1,23 +1,16 @@
 @import './variables.less';
 
-.cartContainer {
-    background: @background;
-    background: @gradient;
-}
 
 .items {
-    background-color: white;
     margin: 0 3rem;
     border-radius: 10px;
-    border-top: 1px solid @borderColor;
-    border-left: 1px solid @borderColor;
-    border-right: 1px solid @borderColor;
-
+    border: 1px solid @borderColor;
+    background-color: white;
 }
 
 .cart {
     padding: 2rem;
-    padding-bottom: 0;
+    background-color: rgb(223, 208, 208);
 
 }
 
@@ -61,6 +54,27 @@
     }
 }
 
+.newAddressCont {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    align-items: flex-start;
+
+    h4 {
+        width: 100%;
+        text-align: center;
+        font-size: 25px;
+    }
+
+    select {
+        width: 100%;
+        padding: 2px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: 1px solid gray;
+        outline: none;
+    }
+}
 
 .continue {
     a {
@@ -81,10 +95,6 @@
 
     }
 
-    a {
-        max-width: 60%;
-        margin: auto;
-    }
 
     @media (max-width: 900px) {
         flex-direction: column;

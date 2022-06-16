@@ -32,20 +32,41 @@ import {
   GET_COMMENTS,
   GET_SUPPORT,
   GET_FAVS,
-  CHANGE_FAVS,DELETE_FAVS, POST_FAVS,
+  CHANGE_FAVS,
+  DELETE_FAVS,
+  POST_FAVS,
   GET_SHOPPING_HISTORY,
-  SET_PAGE
-
+  SET_PAGE,
+  DELETE_REVIEW,
+  REPORT_REVIEW,
+  UPDATE_REVIEW,
+  CONFIRMATION_MAIL,
+  REQUEST_NEW_PASSWORD,
+  CHANGE_PASSWORD1,
+  CRYPTO,
+  GET_SALES,
+  GET_REVIEWS,
+  REPLY_SUPPORT,
+  SET_DELIVERY_ADDRESS,
+  REPLY_SUPPORT_GUEST,
+  UPDATE_SENT,
+  UPDATE_DONE,
+  DELETE_ADM_REVIEW,
+  CHANGE_IMG,
+  BOOK_EDIT,
 } from "./types";
 
 import axios from "axios";
+import Swal from "sweetalert2";
 
+const HEROKU_URL = 'https://back-pf.herokuapp.com/' 
 export function getBySearch(input) {
+
   return async function (dispatch) {
     if (input.length) {
       try {
         const response = await axios.get(
-          `http://localhost:3001/books?titleOrAuthor=${encodeURIComponent(
+          `${HEROKU_URL}books?titleOrAuthor=${encodeURIComponent(
             input
           )}`
         );
@@ -59,14 +80,14 @@ export function getBySearch(input) {
 
 export const getBooks = (dispatch) => {
   axios
-    .get(`http://localhost:3001/books`)
+    .get(`${HEROKU_URL}books`)
     .then((res) => dispatch({ type: GET_BOOKS, payload: res.data }))
     .catch((e) => console.log(e));
 };
 
 export const getCategories = (dispatch) => {
   axios
-    .get(`http://localhost:3001/categories`)
+    .get(`${HEROKU_URL}categories`)
     .then((res) => dispatch({ type: GET_CATEGORIES, payload: res.data }))
     .catch((e) => console.log(e));
 };
@@ -74,7 +95,7 @@ export const getCategories = (dispatch) => {
 export function getDetail(id) {
   return async function (dispatch) {
     try {
-      var response = await axios.get(`http://localhost:3001/books/${id}`);
+      var response = await axios.get(`${HEROKU_URL}books/${id}`);
       return dispatch({ type: GET_DETAIL, payload: response.data });
     } catch (e) {
       console.log(e);
@@ -90,7 +111,7 @@ export function filterCategory(category) {
   if (category === "All") {
     return async function (dispatch) {
       try {
-        var response = await axios.get(`http://localhost:3001/books`);
+        var response = await axios.get(`${HEROKU_URL}books`);
         return dispatch({ type: FILTER_CATEGORY, payload: response.data });
       } catch (e) {
         console.log(e);
@@ -100,9 +121,14 @@ export function filterCategory(category) {
     return async function (dispatch) {
       try {
         var response = await axios.get(
-          `http://localhost:3001/books?category=${category}`
+          `${HEROKU_URL}books?category=${category}`
         );
-        return dispatch({ type: FILTER_CATEGORY, payload: response.data });
+        if(response.data.length!==0){return dispatch({ type: FILTER_CATEGORY, payload: response.data })}
+        else{Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'There are no books that match your search',
+        })};
       } catch (e) {
         console.log(e);
       }
@@ -114,9 +140,14 @@ export function filterPrice(price1, price2) {
   return async function (dispatch) {
     try {
       var response = await axios.get(
-        `http://localhost:3001/books?rango1=${price1}&rango2=${price2}`
+        `${HEROKU_URL}books?rango1=${price1}&rango2=${price2}`
       );
-      return dispatch({ type: FILTER_PRICE, payload: response.data });
+      if(response.data.length!==0){return dispatch({ type: FILTER_PRICE, payload: response.data })}
+      else{Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'There are no books that match your search',
+      })};
     } catch (e) {
       console.log(e);
     }
@@ -131,7 +162,7 @@ export function filterScore(score) {
   if (score === "All") {
     return async function (dispatch) {
       try {
-        var response = await axios.get(`http://localhost:3001/books`);
+        var response = await axios.get(`${HEROKU_URL}books`);
         return dispatch({ type: FILTER_SCORE, payload: response.data });
       } catch (e) {
         console.log(e);
@@ -141,9 +172,14 @@ export function filterScore(score) {
     return async function (dispatch) {
       try {
         var response = await axios.get(
-          `http://localhost:3001/books?score=${score}`
+          `${HEROKU_URL}books?score=${score}`
         );
-        return dispatch({ type: FILTER_SCORE, payload: response.data });
+        if(response.data.length!==0){return dispatch({ type: FILTER_SCORE, payload: response.data })}
+        else{Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'There are no books that match your search',
+        })};
       } catch (e) {
         console.log(e);
       }
@@ -167,7 +203,7 @@ export function removeOneFromCart(id) {
 export function postBook(data) {
   return (dispatch) => {
     axios
-      .post(`http://localhost:3001/books`, data)
+      .post(`${HEROKU_URL}books`, data)
       .then((response) => dispatch({ type: POST_BOOK }))
       .catch((e) => {
         console.log(e);
@@ -178,7 +214,7 @@ export function postBook(data) {
 export function putBook(data, id) {
   return (dispatch) => {
     axios
-      .put(`http://localhost:3001/books/book/${id}`, data)
+      .put(`${HEROKU_URL}books/book/${id}`, data)
       .then((response) => dispatch({ type: PUT_BOOK }))
       .catch((e) => {
         console.log(e);
@@ -189,7 +225,7 @@ export function putBook(data, id) {
 export function deleteBook(id) {
   return (dispatch) => {
     axios
-      .delete(`http://localhost:3001/books/delete/book/${id}`)
+      .delete(`${HEROKU_URL}books/delete/book/${id}`)
       .then((response) => dispatch({ type: DELETE_BOOK }))
       .catch((e) => {
         console.log(e);
@@ -203,7 +239,7 @@ export function getCart() {
 export function getLandingTop() {
   return (dispatch) => {
     axios
-      .get(`http://localhost:3001/books/land/filter?score=5`)
+      .get(`${HEROKU_URL}books/land/filter?score=5`)
       .then((res) => dispatch({ type: GET_LANDING_TOP, payload: res.data }))
       .catch((err) => console.log(err));
   };
@@ -211,7 +247,7 @@ export function getLandingTop() {
 export function getLandingTopCat() {
   return (dispatch) => {
     axios
-      .get(`http://localhost:3001/books/landing/Adventures/Thriller/Academic`)
+      .get(`${HEROKU_URL}books/landing/Adventures/Thriller/Academic`)
       .then((res) => dispatch({ type: GET_LANDING_TOP_CAT, payload: res.data }))
       .catch((err) => console.log(err));
   };
@@ -220,7 +256,7 @@ export function getLandingTopCat() {
 export function postUser(payload) {
   return async function () {
     try {
-      let response = await axios.post(`http://localhost:3001/user/`, payload);
+      let response = await axios.post(`${HEROKU_URL}user/`, payload);
       console.log("DALEGATO", response);
       return response;
     } catch (e) {
@@ -232,11 +268,17 @@ export function postUser(payload) {
 export function logUser(payload) {
   return async function (dispatch) {
     try {
-      var response = await axios.post(`http://localhost:3001/auth/`, payload);
-      let TKN = response.data.token;
-      localStorage.setItem("token", JSON.stringify(TKN));
-      return dispatch({ type: LOG_USER, payload: response.data.user });
+      var response = await axios.post(`${HEROKU_URL}auth/`, payload);
+      console.log("log", response.data);
+      if (response.data.user.confirmation === false) {
+        return;
+      } else {
+        let TKN = response.data.token;
+        localStorage.setItem("token", JSON.stringify(TKN));
+        return dispatch({ type: LOG_USER, payload: response.data.user });
+      }
     } catch (e) {
+      console.log("log", e.message);
       console.log(e);
     }
   };
@@ -251,7 +293,7 @@ export function logWithGoogle(payload) {
   return async function (dispatch) {
     try {
       const res = await axios.post(
-        "http://localhost:3001/auth/google",
+        `${HEROKU_URL}auth/google`,
         payload
       );
       let TKN = res.data.token;
@@ -266,7 +308,7 @@ export function logWithGoogle(payload) {
 export function paymentPaypal(payload) {
   return async function () {
     try {
-      const pay = await axios.post("http://localhost:3001/paypal", payload);
+      const pay = await axios.post(`${HEROKU_URL}paypal`, payload);
       return { type: PAYMENT_PAYPAL, payload: pay };
     } catch (err) {
       console.log(err);
@@ -284,7 +326,7 @@ export function infoBooks(payload) {
 export function infoSoldBooks(payload) {
   return async function () {
     try {
-      const res = await axios.post("http://localhost:3001/paypal", payload);
+      const res = await axios.post(`${HEROKU_URL}paypal`, payload);
       return res;
     } catch (error) {
       console.log("error", error);
@@ -295,7 +337,7 @@ export function infoSoldBooks(payload) {
 export function getUsers(payload) {
   return async function (dispatch) {
     try {
-      const res = await axios.get("http://localhost:3001/user", payload);
+      const res = await axios.get(`${HEROKU_URL}user`, payload);
       console.log("soy res", res.data.users);
       return dispatch({ type: GET_USERS, payload: res.data.users });
     } catch (err) {
@@ -308,7 +350,7 @@ export function editProfile(payload, id) {
   return async function (dispatch) {
     try {
       var response = await axios.put(
-        `http://localhost:3001/user/${id}`,
+        `${HEROKU_URL}user/${id}`,
         payload,
         {
           headers: {
@@ -316,6 +358,49 @@ export function editProfile(payload, id) {
           },
         }
       );
+      console.log("edit", response.data);
+      return dispatch({ type: EDIT_PROFILE, payload: response.data.userUp });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+
+export function addAdress(payload, id) {
+  return async function (dispatch) {
+    try {
+      var response = await axios.put(
+        `${HEROKU_URL}user/${id}`,
+        { adress: payload },
+        {
+          headers: {
+            Authorization: JSON.parse(localStorage.getItem("token")),
+          },
+        }
+      );
+      console.log("edit", response.data);
+      return dispatch({ type: EDIT_PROFILE, payload: response.data.userUp });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+export function deleteProfile(payload, id) {
+  return async function (dispatch) {
+    try {
+      const adress = payload;
+      //? cotent-type=application/json
+      var response = await axios.delete(
+        `${HEROKU_URL}auth/adress/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+          data: { adress },
+        }
+      );
+
       return dispatch({ type: EDIT_PROFILE, payload: response.data.userUp });
     } catch (e) {
       console.log(e);
@@ -326,7 +411,7 @@ export function editProfile(payload, id) {
 export function getUser() {
   return async function (dispatch) {
     try {
-      var response = await axios.get(`http://localhost:3001/auth/renew`, {
+      var response = await axios.get(`${HEROKU_URL}auth/renew`, {
         headers: {
           Authorization: JSON.parse(localStorage.getItem("token")),
         },
@@ -342,7 +427,7 @@ export function sendEmail(payload) {
   return async function () {
     try {
       const sendEmail = await axios.post(
-        "http://localhost:3001/email",
+        `${HEROKU_URL}email`,
         payload
       );
       return { type: SEND_EMAIL, payload: sendEmail };
@@ -352,13 +437,10 @@ export function sendEmail(payload) {
   };
 }
 
-
-
-
 export function postSupport(payload) {
   return async function () {
     try {
-      let response = await axios.post(`http://localhost:3001/support`, payload);
+      let response = await axios.post(`${HEROKU_URL}support`, payload);
       return response;
     } catch (e) {
       console.log(e);
@@ -366,24 +448,25 @@ export function postSupport(payload) {
   };
 }
 
-export function addComment(payload){
+export function addComment(obj) {
   return async function (dispatch) {
     try {
-      console.log("add comment", payload)
-      var response = await axios.post(`http://localhost:3001/reviews`,payload);
-      return dispatch({ type: ADD_COMMENT });
+      var response = await axios.post(`${HEROKU_URL}reviews`, obj);
+      return dispatch({ type: ADD_COMMENT, payload: response.data });
     } catch (e) {
       console.log(e);
     }
   };
 }
 
-export function showComments(id){
+export function showComments(id) {
   return async function (dispatch) {
     try {
-      let response = await axios.get(`http://localhost:3001/reviews/allReviews?book=${id}`);
-      console.log("comentarios",response)
-      return dispatch ({type:GET_COMMENTS, payload: response.data})
+      let response = await axios.get(
+        `${HEROKU_URL}reviews/allReviews?book=${id}`
+      );
+      console.log("comentarios", response);
+      return dispatch({ type: GET_COMMENTS, payload: response.data });
     } catch (e) {
       console.log(e);
     }
@@ -393,42 +476,49 @@ export function showComments(id){
 export function getSupport() {
   return async function (dispatch) {
     try {
-      const response = await axios.get("http://localhost:3001/support");
-      return dispatch({ type: GET_SUPPORT, payload: response.data });
+      const res = await axios.get(`${HEROKU_URL}support`);
+      // localStorage.setItem("token", JSON.stringify(res.data.token));
+      // console.log(res.data);
+      // console.log("id admin", localStorage.getItem("token"));
+      return dispatch({ type: GET_SUPPORT, payload: res.data.supports });
     } catch (error) {
       console.log(error);
     }
   };
 }
-
 
 export function getFavs(user) {
   return async function (dispatch) {
     try {
-      const response = await axios.get(`http://localhost:3001/favourites?user=${user}`);
+      const response = await axios.get(
+        `${HEROKU_URL}favourites?user=${user}`
+      );
       return dispatch({ type: GET_FAVS, payload: response.data });
     } catch (error) {
       console.log(error);
     }
-  }}
+  };
+}
 
 export function getShoppingHistory(id) {
   return async function (dispatch) {
     try {
-      var response = await axios.get(`http://localhost:3001/paypal/payments/${id}`);
+      var response = await axios.get(
+        `${HEROKU_URL}paypal/payments/${id}`
+      );
       return dispatch({ type: GET_SHOPPING_HISTORY, payload: response.data });
     } catch (e) {
       console.log(e);
-
     }
   };
 }
 
-
-export function deleteFavs(user,book) {
+export function deleteFavs(user, book) {
   return async function (dispatch) {
     try {
-      const response = await axios.delete(`http://localhost:3001/favourites?user=${user}&favs=${book}`);
+      const response = await axios.delete(
+        `${HEROKU_URL}favourites?user=${user}&favs=${book}`
+      );
       return dispatch({ type: DELETE_FAVS, payload: response.data });
     } catch (error) {
       console.log(error);
@@ -438,30 +528,274 @@ export function deleteFavs(user,book) {
 export function postFavs(obj) {
   return async function (dispatch) {
     try {
-      const response = await axios.post(`http://localhost:3001/favourites`,obj);
+      const response = await axios.post(
+        `${HEROKU_URL}favourites`,
+        obj
+      );
       return dispatch({ type: POST_FAVS, payload: response.data });
     } catch (error) {
       console.log(error);
     }
-    }
-  }
-
+  };
+}
 
 export function setPage(num) {
   return async function (dispatch) {
     try {
       return dispatch({ type: SET_PAGE, payload: num });
-
     } catch (error) {
       console.log(error);
     }
   };
-
 }
 
 export function changeFavs(payload) {
   return { type: CHANGE_FAVS, payload };
 }
 
+export function reportReview(id, idBook, obj) {
+  return async function (dispatch) {
+    try {
+      const response = await axios.put(`${HEROKU_URL}reviews/report/${id}?book=${idBook}`, obj);
+      return dispatch({ type: REPORT_REVIEW, payload: response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+  export function deleteReview(book, review) {
+    return async function (dispatch) {
+      try {
+        const response = await axios.delete(`${HEROKU_URL}reviews?book=${book}&review=${review}`);
+        return dispatch({ type: DELETE_REVIEW, payload: response.data });
+         } catch (error) {
+        console.log(error);
+      }
+      }
+    }
+
+export function updateReview(review, book, obj) {
+  return async function (dispatch) {
+    try {
+      const response = await axios.put(
+        `${HEROKU_URL}reviews?review=${review}&book=${book}`,
+        obj
+      );
+      return dispatch({ type: UPDATE_REVIEW, payload: response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function confirmationMail(id) {
+  return async function (dispatch) {
+    try {
+      const response = await axios.put(
+        `${HEROKU_URL}auth/confirmation/${id}`
+      );
+      console.log("response", response);
+      return dispatch({ type: CONFIRMATION_MAIL });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function editReview(id, obj) {
+  return async function (dispatch) {
+    try {
+      const response = await axios.put(
+        `${HEROKU_URL}reviews/report/${id}`,
+        obj
+      );
+      return dispatch({ type: REPORT_REVIEW, payload: response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function requestPassword(email) {
+  return async function (dispatch) {
+    try {
+      console.log(email);
+      const response = await axios.post(
+        `${HEROKU_URL}email/password`,
+        { email }
+      );
+      console.log("response", response);
+      return dispatch({ type: REQUEST_NEW_PASSWORD });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function changePassword1(id, password) {
+  return async function (dispatch) {
+    try {
+      const response = await axios.put(`${HEROKU_URL}user/${id}`, {
+        password,
+      });
+      console.log("response", response);
+      return dispatch({ type: CHANGE_PASSWORD1 });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function exchangeCrypto() {
+  return async function (dispatch) {
+    try {
+      var response = await axios.get(
+        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`
+      );
+      return dispatch({ type: CRYPTO, payload: response.data.ethereum.usd });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+
+export function replySupport(payload) {
+  return async function (dispatch) {
+    try {
+      var response = await axios.put(
+        `${HEROKU_URL}support`,
+        payload
+        /* {
+          headers: {
+            Authorization: JSON.parse(localStorage.getItem("token")),
+          },
+        } */
+      );
+      console.log("estoy en el reply");
+      return dispatch({ type: REPLY_SUPPORT, payload: response.data });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+
+export function getSales() {
+  return async function (dispatch) {
+    try {
+      const res = await axios.get(`${HEROKU_URL}paypal/allpayments`);
+      console.log("ACT COMPRAS", res);
+      return dispatch({ type: GET_SALES, payload: res.data });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+}
+
+export function getReviews() {
+  return async function (dispatch) {
+    try {
+      const res = await axios.get(`${HEROKU_URL}reviews/allReviews/admin`);
+      console.log("ACT REVIEWS", res);
+      return dispatch({ type: GET_REVIEWS, payload: res.data });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+}
+
+export function deleteAdmReview(id, obj) {
+  return async function (dispatch) {
+    try {
+      const res = await axios.put(`${HEROKU_URL}reviews/report/${id}`, {report:null})
+      return dispatch({ type: DELETE_ADM_REVIEW, payload: res.data });
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
 
 
+export function filterSupportStatus (payload) {
+  return ({
+      type: "FILTER_SUPPORT",
+      payload: payload
+  })
+}
+
+export function setDeliveryAddress(address) {
+  return async function (dispatch) {
+    try {
+      return dispatch({ type: SET_DELIVERY_ADDRESS, payload: address });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function replySupportGuest(payload) {
+  return async function (dispatch) {
+    try {
+      var response = await axios.post(
+        `${HEROKU_URL}email/support`,
+        payload
+        /* {
+          headers: {
+            Authorization: JSON.parse(localStorage.getItem("token")),
+          },
+        } */
+      );
+      
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+
+export function updateSent(id) {
+  return async function (dispatch) {
+    try {
+      var response = await axios.put(`${HEROKU_URL}paypal/payments/sent`,{id:id})
+      return dispatch({ type: UPDATE_SENT });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+
+export function updateDone(id) {
+  return async function (dispatch) {
+    try {
+      var response = await axios.put(`${HEROKU_URL}paypal/payments/done`,{id:id})
+      return dispatch({ type: UPDATE_DONE });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function changeImg(id, tipo, img) {
+    return async function (dispatch) {
+      try {
+        var response = await axios.put(`${HEROKU_URL}upload/${tipo}/${id}`, img, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          }
+        });
+        console.log("change img", response.data);
+        return dispatch({ type: CHANGE_IMG, payload: response.data.url });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+}
+
+export function bookEdit(id) {
+  return async function (dispatch) {
+    try {
+      return dispatch({ type: BOOK_EDIT, payload: id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}

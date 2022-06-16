@@ -1,47 +1,31 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { postUser } from '../../redux/actions';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUsers, postUser } from '../../redux/actions';
 import { Formik, Form, Field } from 'formik';
 import { useHistory } from 'react-router-dom';
 import Swal from "sweetalert2";
+import ReCAPTCHA from "react-google-recaptcha";
+
 import './styles.css'
 export default function Register() {
     const dispatch = useDispatch()
+    const captcha = useRef(null)
+    const [captchaVal, setCaptchaVal] = useState(false)
     const history = useHistory()
+    useEffect(() => {
+        dispatch(getUsers())
+    }, [dispatch])
 
-    /* const [newUser, setNewUser]=useState({
-      name:"",
-      lastName:"",
-      password:"",
-      password2:"",
-      email:"",
-      imgProfile: ""   
-    })
-  
-    function handleChange(e){
-      e.preventDefault();
-      setNewUser({
-          ...newUser,
-          [e.target.name] : e.target.value
-      })
-  }
-  
-  function handleSubmit(e){
-      e.preventDefault();
-      dispatch(postUser(newUser))
-      alert("Te has registrado")
-      console.log("SOY EL USER PAPA", newUser)
-      setNewUser({
-          name:"",
-          lastName:"",
-          password:"",
-          email:"",
-          imgProfile: ""        
-      })
-  } */
+    const users = useSelector(state => state.users)
+    console.log("usuarios", users)
+
 
     const redirect = () => {
         history.push("/home")
+    }
+
+    function onChange() {
+        setCaptchaVal(true)
     }
 
     return (
@@ -53,7 +37,8 @@ export default function Register() {
                     password: "",
                     password2: "",
                     email: "",
-                    imgProfile: ""
+                    imgProfile: null,
+                    captcha: ""
                 }}
                 validate={(valores) => {
                     let errors = {};
@@ -72,6 +57,9 @@ export default function Register() {
                     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(valores.email)) {
                         errors.email = 'Invalid e-mail address';
                     }
+                    else if (users.find(e=>e.email.toLowerCase()===valores.email.toLowerCase())) {
+                        errors.email = 'This mail is already registered';
+                    }
                     if (!valores.password) {
                         errors.password = 'Password required'
                     }
@@ -81,14 +69,27 @@ export default function Register() {
                     return errors;
                 }}
                 onSubmit={(valores, { resetForm }) => {
-                    dispatch(postUser(valores))
-                    Swal.fire(
-                        'You have been registered',
-                        'Welcome to bookstore c:',
-                        'success'
-                      )
-                    resetForm()
-                    setTimeout(() => redirect(), "1000")
+                    if (captchaVal === false) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Please check the captcha box to register',
+                        })
+                    }
+                    valores.email.toLowerCase()
+                    if (valores.imgProfile === null) {
+                        valores.imgProfile = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+                    }
+                    else {
+                        dispatch(postUser(valores))
+                        Swal.fire(
+                            'You have been registered',
+                            'Please confirm your email before logging in',
+                            'success'
+                        )
+                        resetForm()
+                        setTimeout(() => redirect(), "1000")
+                    }
                 }}>
                 {({ touched, errors }) => (
                     <Form classname="registerForm">
@@ -122,6 +123,13 @@ export default function Register() {
                             <label>Profile picture (optional): </label>
                             <Field type="text" name="imgProfile" placeholder="Profile picture" />
                         </div>
+                        <ReCAPTCHA
+                            ref={captcha}
+                            sitekey="6Lc_RlkgAAAAAHm3lFu7iwKYTD3wu2owN56SxDdW"
+                            onChange={onChange}
+                            style={{ justifyContent: 'center', display: 'flex' }}
+
+                        />
                         <div className='fieldReg'>
                             <button type="submit">Register</button>
                         </div>

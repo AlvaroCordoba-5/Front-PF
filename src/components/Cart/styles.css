@@ -1,18 +1,12 @@
-.cartContainer {
-  background: #ffe8f2;
-  background: linear-gradient(148deg, #ffe8f2 0%, #d8fffb 31%, #ffffff 58%, #ffe8f2 83%);
-}
 .items {
-  background-color: white;
   margin: 0 3rem;
   border-radius: 10px;
-  border-top: 1px solid #c4c4c4;
-  border-left: 1px solid #c4c4c4;
-  border-right: 1px solid #c4c4c4;
+  border: 1px solid #c4c4c4;
+  background-color: white;
 }
 .cart {
   padding: 2rem;
-  padding-bottom: 0;
+  background-color: #dfd0d0;
 }
 .empty {
   display: block;
@@ -47,6 +41,25 @@
   font-size: 25px;
   margin: 0 2rem 1rem 2rem;
 }
+.newAddressCont {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  align-items: flex-start;
+}
+.newAddressCont h4 {
+  width: 100%;
+  text-align: center;
+  font-size: 25px;
+}
+.newAddressCont select {
+  width: 100%;
+  padding: 2px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid gray;
+  outline: none;
+}
 .continue {
   justify-content: center;
 }
@@ -61,10 +74,6 @@
   background-color: #d12d2d;
   color: white;
   font-size: 18px;
-}
-.continue a {
-  max-width: 60%;
-  margin: auto;
 }
 @media (max-width: 900px) {
   .continue {

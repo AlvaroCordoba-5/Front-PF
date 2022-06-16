@@ -1,95 +1,183 @@
-import React, { useEffect } from "react";
 import NavBar from "../NavBar/NavBar";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { getShoppingHistory, updateDone } from "../../redux/actions";
+import React, { useEffect, useMemo } from "react";
+import {
+  useTable,
+  useSortBy,
+  useGlobalFilter,
+  usePagination,
+} from "react-table";
 import { useDispatch, useSelector } from "react-redux";
-import { getShoppingHistory } from "../../redux/actions";
-import DataTable from 'react-data-table-component'
+import { COLUMNS } from "./Columns";
+import { BiCaretDown, BiCaretUp } from "react-icons/bi";
+import { BsFillBagCheckFill } from "react-icons/bs";
+import SearchBar from "./SearchBar";
 
-function ShoppingHistory() {
+export default function ShoppingHistory() {
   const user = useSelector((state) => state.user);
-  const x = useSelector((state) => state.ShoppingHistory);
+  var { payments, paymentcryptos } = useSelector(
+    (state) => state.ShoppingHistory
+  );
   let id = user.idUser;
-  let a=[]
-  let finalpay=[]
-  console.log(x);
-  let pay = x.payments?.map((e) => e.paymentbooks);
-  pay?.forEach(element => {
-    a.push(element)
-  })
- 
-  
-  a.forEach((element,i) => {
-    element.forEach((e,i)=>finalpay.push(e))
-  }) 
 
-
-  console.log(finalpay)
-
-  finalpay.map(e=>e.createdAt=e.createdAt.split("T")[0])
-
-
+  if (payments === undefined) var dat = [];
+  else var dat = payments.concat(paymentcryptos);
 
   const dispatch = useDispatch();
-  
+
+  const handleChange2 = ({ e, id }) => {
+    e.preventDefault();
+    dispatch(updateDone(id));
+    window.location.reload();
+  };
 
   useEffect(() => {
     dispatch(getShoppingHistory(id));
   }, [dispatch]);
 
+  var columns = useMemo(() => COLUMNS, []);
+  var data = useMemo(() => dat, [payments]);
 
-  const column = [
+  const tableHooks = (hooks) => {
+    hooks.visibleColumns.push((columns) => [
+      ...columns,
+      {
+        id: "Actions",
+        Header: "Actions",
+        Cell: ({ row }) => (
+          <div>
+            {row.original.deliveryStatus === "Send" ? (
+              <button className='sendorder' style={{ borderRadius: "10px", backgroundColor: "##dbdbdb", width: '150px', height: '50px', cursor: "pointer" }}
+                onClick={(e) => handleChange2({ e, id: row.original.id })}
+              >
+                I've already received my order<BsFillBagCheckFill className="iconOrder" />
+              </button>
+            ) : null}
+            {row.original.deliveryStatus === "Order received" ? <p>Complete</p> : null}
+          </div>
+        ),
+      },
+    ]);
+  };
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    nextPage,
+    previousPage,
+    canNextPage,
+    canPreviousPage,
+    pageOptions,
+    prepareRow,
+    gotoPage,
+    pageCount,
+    setPageSize,
+    state,
+    setGlobalFilter,
+  } = useTable(
     {
-        name : "Title",
-        selector: "title",
-        sortable: true
-  
+      columns,
+      data,
     },
-    {
-        name : "Author",
-        selector: "author",
-        sortable: true
-  
-    },
-    {
-      name : "Price",
-      selector: "price",
-      sortable: true
+    tableHooks,
+    useGlobalFilter,
+    useSortBy,
+    usePagination
+  );
 
-  },
-  {
-    name : "Quantity",
-    selector: "cant",
-    sortable: true
-
-},
-{
-  name : "Date",
-  selector: "createdAt",
-  sortable: true
-
-},
-
-  
-    
-    ]
+  const { globalFilter } = state;
+  const { pageIndex, pageSize } = state;
 
   return (
     <>
-      <NavBar></NavBar>
+      <NavBar />
       <div>
-        <h1>Shopping History</h1>
+        <h1 style={{ marginLeft: '5%', fontWeight: '400', fontFamily: 'Source Sans Pro', fontSize: '50px', color: '#3888ba' }}>Shopping History</h1>
         <br></br>
-        
-      <DataTable 
-        columns={column}
-        data={finalpay}
-        tabla="Shopping History"
-        pagination
-      />
-    </div>
-     
+      </div>
+
+      <SearchBar filter={globalFilter} setFilter={setGlobalFilter} />
+      <table {...getTableProps()} style={{ width: '90%', margin: 'auto' }}>
+        <thead>
+          {headerGroups.map((headerGroups) => (
+            <tr {...headerGroups.getHeaderGroupProps()}>
+              {headerGroups.headers.map((column) => (
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")}
+                  {column.isSorted ? (
+                    column.isSortedDesc ? (
+                      <BiCaretDown />
+                    ) : (
+                      <BiCaretUp />
+                    )
+                  ) : (
+                    ""
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps}>
+          {page.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <div className="button">
+        <span>
+          Go to page :{" "}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={(e) => {
+              const pageNumber = e.target.value
+                ? Number(e.target.value) - 1
+                : 0;
+              gotoPage(pageNumber);
+            }}
+          />
+        </span>
+        <span>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>
+        </span>
+        <select
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+        >
+          {[10, 20, 30, 40, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {"<<"}
+        </button>
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          Previous
+        </button>
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          Next
+        </button>
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {">>"}
+        </button>
+      </div>
     </>
   );
 }
-
-export default ShoppingHistory;

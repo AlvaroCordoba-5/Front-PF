@@ -3,18 +3,24 @@ import ReactDOM from "react-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../NavBar/NavBar";
+import Footer from "../Footer/Footer";
 import Itemscheckout from "./Itemscheckout";
+import { FaEthereum } from 'react-icons/fa'
 import {
   getCart,
   infoBooks,
   infoSoldBooks,
   sendEmail,
   getUser,
+  exchangeCrypto,
+  totalPrice
 } from "../../redux/actions";
 import { useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import "./styles.css";
 import Login from "../Login/Login";
+import Crypto from "./Crypto/Crypto";
+import CheckoutDirection from "../CheckoutDirection/CheckoutDirection";
 
 const PayPalButton = window.paypal.Buttons.driver("react", { React, ReactDOM });
 
@@ -38,20 +44,29 @@ export default function Checkout() {
   console.log("soy user id", user.idUser);
 
 
-// useEffect(() => {
-//   dispatch(getUser())
-  
-// }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(getUser())
+
+  // }, [dispatch])
 
   console.log(user);
 
   useEffect(() => {
     dispatch(getCart());
+    dispatch(exchangeCrypto())
   }, [dispatch]);
+  const crypto = useSelector(state => state.crypto)
+
+  let address = localStorage.getItem('address')
+
+  let x = preciototal / crypto
+  let valuecrypto = x.toString()
+  let val = valuecrypto.slice(0, 11)
+
 
   const createOrder = (data, actions) => {
     if (user.hasOwnProperty("name")) {
-      
+
       return actions.order.create({
         purchase_units: [
           {
@@ -75,7 +90,10 @@ export default function Checkout() {
       totalPrice: preciototal,
       infoBook: infoBook,
       userId: userId,
+      address: address
     };
+
+
 
     dispatch(infoBooks(infoBook));
     dispatch(infoSoldBooks(totalInfo));
@@ -84,14 +102,15 @@ export default function Checkout() {
     let timerInterval;
     Swal.fire({
       title: "Your payment was successful",
+      html: 'Thank you for trusting in BookStore',
       timer: 5000,
       timerProgressBar: true,
-      didOpen: (success) => {
-        Swal.getIcon(success);
-        const b = Swal.getHtmlContainer().querySelector("b");
+      didOpen: () => {
+        Swal.showLoading()
+        const b = Swal.getHtmlContainer().querySelector('b')
         timerInterval = setInterval(() => {
-          b.textContent = Swal.getTimerLeft();
-        }, 100);
+          b.textContent = Swal.getTimerLeft()
+        }, 100)
       },
       willClose: () => {
         clearInterval(timerInterval);
@@ -111,23 +130,36 @@ export default function Checkout() {
   return (
     <div className="checkout">
       <NavBar></NavBar>
-      {checkoutinfo?.map((e) => (
-        <Itemscheckout
-          key={e.id}
-          img={e.image}
-          title={e.title}
-          author={e.author}
-          price={e.price * e.cant}
-          cant={e.cant}
-        />
-      ))}
-      <h1>Order Total: ${preciototal}</h1>
-      <div className="paypal">
-        <PayPalButton
-          createOrder={(data, actions) => createOrder(data, actions)}
-          onApprove={(data, actions) => onApprove(data, actions)}
-        />
+      <div className="checkoutCont">
+        <div>
+          {checkoutinfo?.map((e) => (
+            <Itemscheckout
+              key={e.id}
+              img={e.image}
+              title={e.title}
+              author={e.author}
+              price={e.price * e.cant}
+              cant={e.cant}
+            />
+          ))}
+
+        </div>
+        <div className="pay">
+          <h1 style={{ textAlign: 'center', fontSize: '30px' }}>Order Total</h1>
+          <h3>USD: ${preciototal}</h3>
+          <h3>ETH <FaEthereum /> : {val} </h3>
+          <p style={{ textAlign: 'center', }}>Delivery at {localStorage.getItem('address')}</p>
+          <Crypto value={val} infoBook={checkoutinfo} userId={userId} email={email} name={name} lastName={lastName} payment={payment}></Crypto>
+          <a href="https://metamask.io/" target='_blank'><span style={{ display: 'flex', justifyContent: 'center', marginTop: '-20px', marginBottom: '-8px' }}> What is Metamask?</span></a>
+          <div className="paypal">
+            <PayPalButton
+              createOrder={(data, actions) => createOrder(data, actions)}
+              onApprove={(data, actions) => onApprove(data, actions)}
+            />
+          </div>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

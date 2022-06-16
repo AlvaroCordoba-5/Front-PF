@@ -1,5 +1,3 @@
-import ShoppingHistory from "../../components/ShoppingHistory/ShoppingHistory";
-import { infoBooks, totalPrice } from "../actions";
 import {
   GET_BY_SEARCH,
   GET_DETAIL,
@@ -36,7 +34,21 @@ import {
   DELETE_FAVS,
   POST_FAVS,
   GET_SHOPPING_HISTORY,
-  SET_PAGE
+  SET_PAGE,
+  CONFIRMATION_MAIL,
+  CRYPTO,
+  REPORT_REVIEW,
+  UPDATE_REVIEW,
+  DELETE_REVIEW,
+  GET_SALES,
+  SET_DELIVERY_ADDRESS,
+  GET_REVIEWS,
+  REPLY_SUPPORT,
+  FILTER_SUPPORT,
+  DELETE_ADM_REVIEW,
+  DISCARD_REPORT,
+  CHANGE_IMG,
+  BOOK_EDIT,
 } from "../actions/types";
 
 const initialState = {
@@ -54,11 +66,17 @@ const initialState = {
   infoBooks: [],
   users: [],
   favs: [],
-  changed:false,
+  changed: false,
   comments: [],
   support: [],
+  backupSupport: [],
   ShoppingHistory:[],
-  page: 1
+  page: 1,
+  crypto: 0,
+  sales: [],
+  reviews: [],
+  address: "",
+  idForEdit: "",
 };
 
 export default function rootReducer(state = initialState, action) {
@@ -70,6 +88,16 @@ export default function rootReducer(state = initialState, action) {
         allBook: payload,
         allBookBackup: payload,
         books: payload,
+      };
+    case SET_DELIVERY_ADDRESS:
+      return {
+        ...state,
+        address: payload,
+      };
+    case CRYPTO:
+      return {
+        ...state,
+        crypto: payload,
       };
     case GET_CATEGORIES:
       return {
@@ -204,22 +232,18 @@ export default function rootReducer(state = initialState, action) {
       return {
         ...state,
         user: { ...payload },
-        
       };
     case LOG_WITH_GOOGLE:
       localStorage.setItem("token", JSON.stringify(payload.token));
-      console.log(payload);
       return {
         ...state,
         user: { ...payload.user },
-       
       };
     case UNLOG_USER:
       localStorage.removeItem("token");
       return {
         ...state,
         user: {},
-        
       };
 
     case TOTAL_PRICE:
@@ -233,21 +257,9 @@ export default function rootReducer(state = initialState, action) {
         infoBooks: payload,
       };
     case GET_USERS:
-      console.log("SOY EL PAYLOAD CARAJO", payload);
       return {
         ...state,
         users: payload,
-      };
-
-    case TOTAL_PRICE:
-      return {
-        ...state,
-        totalPrice: payload,
-      };
-    case CHECKOUT_BOOKS:
-      return {
-        ...state,
-        infoBooks: payload,
       };
     case EDIT_PROFILE:
       return {
@@ -261,14 +273,30 @@ export default function rootReducer(state = initialState, action) {
       };
 
     case ADD_COMMENT:
-      return{
-        ...state
-      }
-    case GET_COMMENTS:
-      return{
+      return {
         ...state,
-        comments: payload
-      }
+        comments: payload,
+      };
+    case REPORT_REVIEW:
+      return {
+        ...state,
+        comments: payload,
+      };
+    case UPDATE_REVIEW:
+      return {
+        ...state,
+        comments: payload,
+      };
+    case DELETE_REVIEW:
+      return {
+        ...state,
+        comments: payload,
+      };
+    case GET_COMMENTS:
+      return {
+        ...state,
+        comments: payload,
+      };
 
     case POST_SUPPORT:
       return {
@@ -276,47 +304,109 @@ export default function rootReducer(state = initialState, action) {
       };
 
     case GET_SUPPORT:
-      return{
+      return {
         ...state,
-        support: payload
+        support: payload,
+        backupSupport: payload
       };
-      case GET_FAVS:
-      return{
+    case GET_FAVS:
+      return {
         ...state,
-        favs: payload
-      }
-      case CHANGE_FAVS:
-      return{
-        ...state,
-        changed: payload
-      }
-      case DELETE_FAVS:
-      return{
-        ...state,
-        favs:payload
+        favs: payload,
       };
-      case POST_FAVS:
-      return{
+    case CHANGE_FAVS:
+      return {
         ...state,
-        favs:payload
-      }
+        changed: payload,
+      };
+    case DELETE_FAVS:
+      return {
+        ...state,
+        favs: payload,
+      };
+    case POST_FAVS:
+      return {
+        ...state,
+        favs: payload,
+      };
 
     case GET_SHOPPING_HISTORY:
-      return{
+      return {
         ...state,
-        ShoppingHistory:payload
-      }
+        ShoppingHistory: payload,
+      };
 
     case SET_PAGE:
-        return{
-          ...state,
-          page: payload
+      return {
+        ...state,
+        page: payload,
+      };
+
+    case CONFIRMATION_MAIL:
+      return {
+        ...state,
+      };
+    case GET_SALES:
+      return {
+        ...state,
+        sales: payload,
+      };
+
+    case GET_REVIEWS:
+      return {
+        ...state,
+        reviews: payload,
+      };
+
+    case REPLY_SUPPORT:
+      return{
+        ...state
       }
 
+    case FILTER_SUPPORT: {
+      
+      var filter = [...state.backupSupport]
+      console.log(payload)
+      
+      if (payload === "to_answer") {
+        var filtered = filter.filter(e => e.status === 0) 
+      }
+
+      if (payload === "respond") {
+        var filtered = filter.filter(e => e.status === 1)
+      }
+
+      if (payload === "all") {
+        filtered = [...state.backupSupport]
+      }
+
+      if (filtered === undefined) {return {
+        ...state,
+        support: []
+      }}
+      else {return {
+        ...state,
+        support: [...filtered]
+      }}      
+    }
+    case DELETE_ADM_REVIEW:
+      return {
+        ...state,
+        reviews: payload,
+      };
+    case CHANGE_IMG:
+      return{
+        ...state,
+        user: {...state.user, imgProfile: payload},
+        detail: {...state.detail, image: payload}
+      }
+    case BOOK_EDIT:
+      return {
+        ...state,
+        idForEdit: payload
+      }
+      
     default:
     return state;
-
-
-    
   }
 }
