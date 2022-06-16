@@ -1,27 +1,28 @@
 import axios from "axios";
+const HEROKU_URL = 'https://back-pf.herokuapp.com' 
 
 export async function helpCall(url) {
-  return axios.get(`http://localhost:3001${url}`).then((res) => {
+  return axios.get(`${HEROKU_URL}${url}`).then((res) => {
     return res.data;
   });
 }
 
 export async function helpCallPut(url, obj) {
-  return axios.post(`http://localhost:3001${url}`, obj).then((res) => {
+  return axios.post(`${HEROKU_URL}${url}`, obj).then((res) => {
     return res.data;
   });
 
 }
 
 export async function helpCallUpdate(url, obj) {
-  return axios.put(`http://localhost:3001${url}`, obj).then((res) => {
+  return axios.put(`${HEROKU_URL}${url}`, obj).then((res) => {
     return res.data;
   });
 
 }
 
 export async function helpCallDelete(url) {
-  return axios.delete(`http://localhost:3001${url}`).then((res) => {
+  return axios.delete(`${HEROKU_URL}${url}`).then((res) => {
     return res.data;
   });
   
