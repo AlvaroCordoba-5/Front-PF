@@ -11,8 +11,8 @@ import Footer from '../Footer/Footer';
 import "./styles.css";
 import { AiFillEdit } from 'react-icons/ai';
 import { MdWarning } from 'react-icons/md'
-import {FiEdit3} from 'react-icons/fi'
-import {AiTwotoneDelete} from 'react-icons/ai'
+import { FiEdit3 } from 'react-icons/fi'
+import { AiTwotoneDelete } from 'react-icons/ai'
 // import { helpCallPut, helpCallUpdate } from '../../helCall';
 import Swal from 'sweetalert2'
 
@@ -71,13 +71,13 @@ export default function BookDetail() {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           }
         })
-        
+
         Toast.fire({
           icon: 'success',
           title: "The book has been deleted successfully!"
         })
-      dispatch(getBooks)
-      redirect()
+        dispatch(getBooks)
+        redirect()
       }
     })
 
@@ -142,7 +142,7 @@ export default function BookDetail() {
           showConfirmButton: false,
           timer: 1500
         })
-        dispatch(deleteReview(user.idUser, bookDet.id, element.id))
+        dispatch(deleteReview(bookDet.id, element.id))
       }
     })
 
@@ -228,10 +228,10 @@ export default function BookDetail() {
             <div className='image'>
               <img src={bookDet.image} alt="" />
               {user.rols?.name === "admin" ?
-              <form className='admin'>
+                <form className='admin'>
 
-                <input type="file"  onChange={handleImage} name="file" id="" />
-              </form>:""}
+                  <input type="file" onChange={handleImage} name="file" id="" />
+                </form> : ""}
               <DetailCompra title={bookDet.title} author={bookDet.author} price={bookDet.price} categories={bookDet.categories} id={bookDet.id} stock={bookDet.stock}></DetailCompra>
             </div>
             <div className='info'>
@@ -264,9 +264,9 @@ export default function BookDetail() {
                       detail: { ...bookDet }
                     }
                   }}>
-                    <button type="button" className='buttonAdmin'>Modify book <FiEdit3  className='icons' size={20}   />  </button>
+                    <button type="button" className='buttonAdmin'>Modify book <FiEdit3 className='icons' size={20} />  </button>
                   </Link>
-                  <button type="button"  className='buttonAdmin' onClick={(e) => delet(e)}>Delete Book <AiTwotoneDelete className='icons' size={20} /></button>
+                  <button type="button" className='buttonAdmin' onClick={(e) => delet(e)}>Delete Book <AiTwotoneDelete className='icons' size={20} /></button>
                 </>
                 : ""}
             </div>
